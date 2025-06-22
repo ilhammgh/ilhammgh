@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Kang Ilham</title>
+    <!-- Tailwind CSS CDN for easy and responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font for "Dancing Script" (Latin-style font) -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <!-- jsPDF and html2canvas for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        /* Custom styles for the footer scrolling animation */
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            animation: marquee 15s linear infinite; /* Adjust time for speed */
+            white-space: nowrap; /* Keep text on single line */
+            display: inline-block; /* Essential for marquee effect */
+        }
+
+        /* Style for Inter font (body default) */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Style for the new "panggil situkang" logo with custom font and glow */
+        .logo-text {
+            font-family: 'Dancing Script', cursive; /* Apply Dancing Script font */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), /* White glow layer 1 */
+                         0 0 15px rgba(255, 255, 255, 0.6), /* White glow layer 2 */
+                         0 0 20px rgba(255, 255, 255, 0.4); /* White glow layer 3 */
+            color: #fff; /* Ensure base color is white for glow effect */
+            font-size: 2.25rem; /* Adjusted for better visibility */
+        }
+
+        /* Style for all navigation links (bold and green glow, Arial font) */
+        .nav-link {
+            font-family: 'Arial', sans-serif; /* Apply Arial font to menu links */
+            font-weight: bold; /* Make it bold */
+            color: #5EEAD4; /* A vibrant teal-300 for base text */
+            text-shadow: 0 0 8px rgba(0, 255, 100, 0.7), /* Green glow layer 1 */
+                         0 0 15px rgba(0, 255, 100, 0.5); /* Green glow layer 2 */
+        }
+
+        /* Style for hover effect on navigation links */
+        .nav-link:hover {
+            color: #20C20E; /* Brighter green on hover */
+            text-shadow: 0 0 10px rgba(0, 255, 100, 1), /* More intense green glow on hover */
+                         0 0 20px rgba(0, 255, 100, 0.8);
+        }
+
+        /* Style for active navigation link (maintains bold and green glow) */
+        .nav-link.active {
+            color: #20C20E; /* Maintain the bright green for active link */
+            /* font-weight: bold is already applied by .nav-link */
+            text-shadow: 0 0 10px rgba(0, 255, 100, 1), /* Intense green glow for active */
+                         0 0 20px rgba(0, 255, 100, 0.8);
+        }
+
+        /* Hide horizontal scrollbar */
+        body {
+            overflow-x: hidden;
+        }
+
+        /* Animation for "jedag jedug" effect with pink shadow */
+        @keyframes jedagJedug {
+            0%, 100% {
+                text-shadow: 0 0 5px rgba(255, 105, 180, 0.5), /* Soft pink shadow */
+                             0 0 10px rgba(255, 105, 180, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 15px rgba(255, 105, 180, 0.8), /* More intense pink shadow */
+                             0 0 25px rgba(255, 105, 180, 0.6);
+                transform: scale(1.05); /* Slightly enlarge text */
+            }
+        }
+        .animate-jedag-jedug {
+            animation: jedagJedug 1.5s infinite alternate; /* 1.5s duration, infinite, alternates direction */
+        }
+
+        /* CSS for simple image animation (pulsate) */
+        @keyframes imagePulsate {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.02);
+                opacity: 0.95;
+            }
+        }
+        .animated-image {
+            animation: imagePulsate 2s ease-in-out infinite alternate;
+        }
+
+        /* Styles for the receipt preview/PDF content */
+        .receipt-content {
+            width: 58mm; /* Standard receipt width */
+            padding: 5mm;
+            box-sizing: border-box;
+            font-family: monospace; /* Monospace for receipt-like text */
+            font-size: 10px;
+            color: #000; /* Black text for printing */
+            background-color: #fff; /* White background for printing */
+            line-height: 1.2;
+        }
+        .receipt-content h3 {
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .receipt-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .receipt-content th, .receipt-content td {
+            text-align: left;
+            padding: 1px 0;
+        }
+        .receipt-content .text-right {
+            text-align: right;
+        }
+        .receipt-content .dashed-line {
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+        }
+        /* Style for QRIS image in receipt */
+        .receipt-qris-img {
+            display: block; /* Ensures it takes up full width and allows margin auto */
+            margin: 5px auto; /* Centers the image */
+            width: 40mm; /* Adjust width to fit 58mm receipt well */
+            height: auto;
+        }
+
+        /* Responsive YouTube iframe container (kept for completeness, though section is removed) */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width * 100%) */
+            height: 0;
+            overflow: hidden;
+            background-color: #000;
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col">
+    <!-- Header and Navigation -->
+    <header class="bg-gray-900 shadow-lg p-4 sticky top-0 z-50 rounded-b-lg">
+        <nav class="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+            <!-- Updated Logo Text with new font and glow -->
+            <div class="text-3xl font-bold logo-text mb-4 sm:mb-0">panggil situkang</div>
+            <ul class="flex space-x-6 text-lg">
+                <!-- Navigation links with hyperlinks and classes for JavaScript -->
+                <li><a href="#home" class="nav-link transition duration-300 rounded-md px-3 py-2 active">Beranda</a></li>
+                <!-- Updated menu item to "AI" -->
+                <li><a href="#ai" class="nav-link transition duration-300 rounded-md px-3 py-2">AI</a></li>
+                <!-- New Aplikasi menu item -->
+                <li><a href="#aplikasi" class="nav-link transition duration-300 rounded-md px-3 py-2">Aplikasi</a></li>
+                <!-- Kasir menu item -->
+                <li><a href="#kasir" class="nav-link transition duration-300 rounded-md px-3 py-2">Kasir</a></li>
+                <li><a href="#profile" class="nav-link transition duration-300 rounded-md px-3 py-2">Profil</a></li>
+                <li><a href="#address" class="nav-link transition duration-300 rounded-md px-3 py-2">Alamat</a></li>
+                <!-- Updated menu item to "Kontak" -->
+                <li><a href="#kontak" class="nav-link transition duration-300 rounded-md px-3 py-2">Kontak</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content that will change dynamically -->
+    <main class="flex-grow container mx-auto p-6">
+        <!-- Home Section -->
+        <section id="home" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl text-center">
+            <!-- "Selamat Datang" text with jedag jedug animation and pink shadow -->
+            <h1 class="text-4xl font-extrabold mb-2 text-teal-300 animate-jedag-jedug">Selamat Datang</h1>
+            <!-- Added "Bismillah" text below "Selamat Datang" -->
+            <p class="text-xl mb-4 text-gray-300">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+            <!-- Updated welcome text for website "panggil situkang" -->
+            <p class="text-xl mb-6">Selamat datang di website panggil situkang!</p>
+
+            <!-- New box with "Produk Unggulan" text -->
+            <div class="bg-gray-700 p-4 rounded-lg border-2 border-teal-500 mb-6 mx-auto max-w-sm">
+                <p class="text-xl font-bold text-teal-200">Produk Unggulan</p>
+            </div>
+
+            <!-- Image added to the Home section -->
+            <img src="file_00000000671461f7b842f70f7c0a8c34-picsay.jpg" alt="Produk One For All Deodorant Spray" class="mx-auto rounded-lg shadow-lg max-w-full h-auto mb-6" onerror="this.onerror=null;this.src='https://placehold.co/400x400/CCCCCC/FFFFFF?text=Gambar+Tidak+Tersedia';">
+            <!-- New button linking to Shopee -->
+            <a href="https://shopee.co.id/tokokangilham" target="_blank" class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                Kunjungi Toko Shopee
+            </a>
+        </section>
+
+        <!-- AI Section - Text to Image & Image to Animation Application -->
+        <section id="ai" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl hidden">
+            <h2 class="text-3xl font-bold mb-4 text-teal-300">AI Kreatif</h2>
+
+            <!-- Text to Image Sub-section -->
+            <div class="mb-8 p-6 bg-gray-700 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4 text-teal-200">Buat Gambar dari Teks</h3>
+                <p class="text-lg mb-6">Masukkan deskripsi teks Anda untuk membuat gambar menggunakan AI.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="promptInput" class="block text-lg font-medium text-gray-300 mb-1">Deskripsi Gambar (Prompt):</label>
+                        <textarea id="promptInput" rows="4" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Contoh: Seekor kucing astronot di bulan"></textarea>
+                    </div>
+                    <button id="generateImageBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                        Buat Gambar
+                    </button>
+                    <div id="loadingIndicator" class="text-center text-teal-300 hidden">
+                        <p>Sedang membuat gambar, mohon tunggu...</p>
+                    </div>
+                    <div id="imageOutput" class="mt-6 flex justify-center items-center p-4 bg-gray-700 rounded-lg min-h-[200px] border border-gray-600">
+                        <p class="text-gray-400">Gambar yang dihasilkan akan muncul di sini.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image to Animation Sub-section -->
+            <div class="mb-8 p-6 bg-gray-700 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4 text-teal-200">Buat Animasi dari Gambar (Efek Visual Sederhana)</h3>
+                <p class="text-lg mb-4">Unggah gambar Anda untuk ditambahkan efek animasi sederhana (pulsasi). Ini adalah efek visual berbasis CSS.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="imageUpload" class="block text-lg font-medium text-gray-300 mb-1">Unggah Gambar:</label>
+                        <input type="file" id="imageUpload" accept="image/*" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent cursor-pointer">
+                    </div>
+                    <div id="uploadedImagePreview" class="mt-4 flex justify-center items-center min-h-[150px] border border-gray-600 rounded-lg overflow-hidden">
+                        <p class="text-gray-400">Pratinjau gambar Anda akan muncul di sini.</p>
+                    </div>
+                    <button id="animateImageBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md" disabled>
+                        Terapkan Animasi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Language Translator Sub-section -->
+            <div class="mb-8 p-6 bg-gray-700 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4 text-teal-200">Penerjemah Bahasa (ID ke EN)</h3>
+                <p class="text-lg mb-4">Terjemahkan teks dari Bahasa Indonesia ke Bahasa Inggris menggunakan AI.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="idText" class="block text-lg font-medium text-gray-300 mb-1">Teks Bahasa Indonesia:</label>
+                        <textarea id="idText" rows="4" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Masukkan teks Bahasa Indonesia di sini..."></textarea>
+                    </div>
+                    <button id="translateBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                        Terjemahkan ke Inggris
+                    </button>
+                    <div id="translateLoading" class="text-center text-teal-300 hidden">
+                        <p>Sedang menerjemahkan, mohon tunggu...</p>
+                    </div>
+                    <div>
+                        <label for="enText" class="block text-lg font-medium text-gray-300 mb-1">Teks Bahasa Inggris:</label>
+                        <textarea id="enText" rows="4" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" readonly placeholder="Hasil terjemahan akan muncul di sini..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VEO 3 Prompt Generator -->
+            <div class="p-6 bg-gray-700 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4 text-teal-200">Generator Prompt Video VEO 3</h3>
+                <p class="text-lg mb-6">Buat prompt terperinci untuk menghasilkan video di VEO 3 dalam Bahasa Indonesia dan Inggris.</p>
+
+                <div class="space-y-6">
+                    <!-- Subject Details -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h4 class="text-xl font-bold mb-3 text-teal-300">DETAIL SUBJEK (Subject Details)</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="charName" class="block text-sm font-medium text-gray-300">Nama Karakter / Character Name:</label>
+                                <input type="text" id="charName" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                            </div>
+                            <div>
+                                <label for="nationality" class="block text-sm font-medium text-gray-300">Kewarganegaraan / Nationality:</label>
+                                <input type="text" id="nationality" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                            </div>
+                            <div>
+                                <label for="charCharacteristics" class="block text-sm font-medium text-gray-300">Karakteristik Subjek / Subject Characteristics:</label>
+                                <textarea id="charCharacteristics" rows="2" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600"></textarea>
+                            </div>
+                            <div>
+                                <label for="mainAction" class="block text-sm font-medium text-gray-300">Aksi Utama / Main Action:</label>
+                                <input type="text" id="mainAction" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                            </div>
+                            <div>
+                                <label for="emotion" class="block text-sm font-medium text-gray-300">Emosi / Emotion:</label>
+                                <input type="text" id="emotion" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Background Details -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h4 class="text-xl font-bold mb-3 text-teal-300">LATAR (Background)</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="location" class="block text-sm font-medium text-gray-300">Lokasi / Location:</label>
+                                <input type="text" id="location" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                            </div>
+                            <div>
+                                <label for="time" class="block text-sm font-medium text-gray-300">Waktu / Time:</label>
+                                <select id="time" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Pagi (Morning)">Pagi (Morning)</option>
+                                    <option value="Siang (Afternoon)">Siang (Afternoon)</option>
+                                    <option value="Senja (Dusk)">Senja (Dusk)</option>
+                                    <option value="Malam (Night)">Malam (Night)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="weather" class="block text-sm font-medium text-gray-300">Cuaca / Weather:</label>
+                                <select id="weather" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Cerah (Clear)">Cerah (Clear)</option>
+                                    <option value="Hujan (Rainy)">Hujan (Rainy)</option>
+                                    <option value="Berawan (Cloudy)">Berawan (Cloudy)</option>
+                                    <option value="Bersalju (Snowy)">Bersalju (Snowy)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="season" class="block text-sm font-medium text-gray-300">Musim / Season:</label>
+                                <select id="season" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Semi (Spring)">Semi (Spring)</option>
+                                    <option value="Panas (Summer)">Panas (Summer)</option>
+                                    <option value="Gugur (Autumn)">Gugur (Autumn)</option>
+                                    <option value="Dingin (Winter)">Dingin (Winter)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Details -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h4 class="text-xl font-bold mb-3 text-teal-300">KAMERA (Camera)</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="cameraStyle" class="block text-sm font-medium text-gray-300">Gaya / Style:</label>
+                                <select id="cameraStyle" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Sinematik (Cinematic)">Sinematik (Cinematic)</option>
+                                    <option value="Dokumenter (Documentary)">Dokumenter (Documentary)</option>
+                                    <option value="Animasi (Animated)">Animasi (Animated)</option>
+                                    <option value="Realistis (Realistic)">Realistis (Realistic)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="cameraMovement" class="block text-sm font-medium text-gray-300">Pergerakan Kamera / Camera Movement:</label>
+                                <select id="cameraMovement" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Pan (Horizontal Rotation)">Pan (Horizontal Rotation)</option>
+                                    <option value="Tilt (Vertical Rotation)">Tilt (Vertical Rotation)</option>
+                                    <option value="Zoom In">Zoom In</option>
+                                    <option value="Zoom Out">Zoom Out</option>
+                                    <option value="Dolly (Move Forward/Backward)">Dolly (Move Forward/Backward)</option>
+                                    <option value="Track (Move Left/Right)">Track (Move Left/Right)</option>
+                                    <option value="Stabil (Static)">Stabil (Static)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="cameraAngle" class="block text-sm font-medium text-gray-300">Sudut Kamera / Camera Angle:</label>
+                                <select id="cameraAngle" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Tingkat Mata (Eye-level)">Tingkat Mata (Eye-level)</option>
+                                    <option value="Sudut Tinggi (High-angle)">Sudut Tinggi (High-angle)</option>
+                                    <option value="Sudut Rendah (Low-angle)">Sudut Rendah (Low-angle)</option>
+                                    <option value="Sudut Burung (Bird's-eye)">Sudut Burung (Bird's-eye)</option>
+                                    <option value="Sudut Cacing (Worm's-eye)">Sudut Cacing (Worm's-eye)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="focus" class="block text-sm font-medium text-gray-300">Fokus / Focus:</label>
+                                <select id="focus" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Tajam (Sharp)">Tajam (Sharp)</option>
+                                    <option value="Buram (Blurry)">Buram (Blurry)</option>
+                                    <option value="Kedalaman Lapangan Dangkal (Shallow Depth of Field)">Kedalaman Lapangan Dangkal (Shallow Depth of Field)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="lighting" class="block text-sm font-medium text-gray-300">Pencahayaan / Lighting:</label>
+                                <select id="lighting" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Terang (Bright)">Terang (Bright)</option>
+                                    <option value="Gelap (Dark)">Gelap (Dark)</option>
+                                    <option value="Natural">Natural</option>
+                                    <option value="Dramatis (Dramatic)">Dramatis (Dramatic)</option>
+                                    <option value="Cahaya Lembut (Soft Light)">Cahaya Lembut (Soft Light)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="colorGrading" class="block text-sm font-medium text-gray-300">Gradasi Warna / Color Grading:</label>
+                                <select id="colorGrading" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Hangat (Warm)">Hangat (Warm)</option>
+                                    <option value="Dingin (Cool)">Dingin (Cool)</option>
+                                    <option value="Cerah (Vibrant)">Cerah (Vibrant)</option>
+                                    <option value="Monokrom (Monochrome)">Monokrom (Monochrome)</option>
+                                    <option value="Realistis (Realistic)">Realistis (Realistic)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Details -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h4 class="text-xl font-bold mb-3 text-teal-300">AUDIO</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="dialogType" class="block text-sm font-medium text-gray-300">Dialog / Dialogue Type:</label>
+                                <select id="dialogType" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="Tanpa dialog">Tanpa dialog (No dialogue)</option>
+                                    <option value="Informatif">Informatif (Informative)</option>
+                                    <option value="Natural dialog">Natural dialog (Natural dialogue)</option>
+                                    <option value="Monolog">Monolog (Monologue)</option>
+                                    <option value="Interview">Interview</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="dialogChar" class="block text-sm font-medium text-gray-300">Karakter Dialog / Dialogue Character (Opsional):</label>
+                                <input type="text" id="dialogChar" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600" placeholder="Nama karakter yang berbicara">
+                            </div>
+                            <div>
+                                <label for="dialogContent" class="block text-sm font-medium text-gray-300">Isi Dialog / Dialogue Content:</label>
+                                <textarea id="dialogContent" rows="3" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600" placeholder="Masukkan isi dialog di sini..."></textarea>
+                            </div>
+                            <div>
+                                <label for="voiceMood" class="block text-sm font-medium text-gray-300">Mood Suara / Voice Mood:</label>
+                                <input type="text" id="voiceMood" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600" placeholder="Contoh: Happy, Sad, Cheerful, Marah">
+                            </div>
+                            <div>
+                                <label for="envSound" class="block text-sm font-medium text-gray-300">Suara Lingkungan / Environmental Sound:</label>
+                                <input type="text" id="envSound" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600" placeholder="Contoh: Suara ombak, gemerisik daun">
+                            </div>
+                            <div>
+                                <label for="bgMusic" class="block text-sm font-medium text-gray-300">Background Music / Musik Latar Belakang:</label>
+                                <input type="text" id="bgMusic" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600" placeholder="Contoh: Musik orkestra epik, melodi piano lembut">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Quality & Duration -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h4 class="text-xl font-bold mb-3 text-teal-300">KUALITAS VIDEO & DURASI (Video Quality & Duration)</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="videoQuality" class="block text-sm font-medium text-gray-300">Kualitas Video / Video Quality:</label>
+                                <select id="videoQuality" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="HD">HD</option>
+                                    <option value="Full HD">Full HD</option>
+                                    <option value="4K">4K</option>
+                                    <option value="Sinematik">Sinematik (Cinematic)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="videoDuration" class="block text-sm font-medium text-gray-300">Durasi Video / Video Duration:</label>
+                                <select id="videoDuration" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="6 Detik">6 Detik (6 Seconds)</option>
+                                    <option value="7 Detik">7 Detik (7 Seconds)</option>
+                                    <option value="8 Detik">8 Detik (8 Seconds)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="videoRatio" class="block text-sm font-medium text-gray-300">RASIO VIDEO / VIDEO RATIO:</label>
+                                <select id="videoRatio" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600">
+                                    <option value="">Pilih / Select</option>
+                                    <option value="LANDSCAPE 16:9">LANDSCAPE 16:9</option>
+                                    <option value="PORTRAIT 9:16">PORTRAIT 9:16</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h4 class="text-xl font-bold mb-3 text-teal-300">DETAIL TAMBAHAN (Additional Details)</h4>
+                        <div>
+                            <label for="additionalDetails" class="block text-sm font-medium text-gray-300">Detail Tambahan / Additional Details:</label>
+                            <textarea id="additionalDetails" rows="3" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600" placeholder="Tambahkan detail lain yang relevan untuk prompt Anda..."></textarea>
+                        </div>
+                    </div>
+
+                    <button id="generateVEO3PromptBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                        Buat Prompt VEO 3
+                    </button>
+
+                    <div id="veo3PromptOutput" class="mt-6 p-4 bg-gray-700 rounded-lg border border-gray-600">
+                        <p class="text-gray-400 mb-2">Prompt yang dihasilkan akan muncul di sini.</p>
+                        <h4 class="text-xl font-bold text-teal-300 mt-4">Prompt Bahasa Indonesia:</h4>
+                        <div id="indoPromptOutput" class="p-3 bg-gray-800 rounded-md whitespace-pre-wrap"></div>
+                        <h4 class="text-xl font-bold text-teal-300 mt-4">English Prompt:</h4>
+                        <div id="engPromptOutput" class="p-3 bg-gray-800 rounded-md whitespace-pre-wrap"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aplikasi Section - Calculator -->
+        <section id="aplikasi" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl hidden">
+            <h2 class="text-3xl font-bold mb-4 text-teal-300">Aplikasi Kalkulator Sederhana</h2>
+            <p class="text-lg mb-6">Lakukan perhitungan dasar dengan kalkulator ini.</p>
+
+            <div class="flex justify-center items-center h-full">
+                <div class="bg-gray-700 p-6 rounded-lg shadow-xl w-full max-w-xs">
+                    <input type="text" id="calculator-display" class="w-full p-4 mb-4 text-right text-3xl font-bold bg-gray-900 rounded-lg border border-gray-600 text-white" value="0" readonly>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <button class="calculator-button operator bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg text-xl" data-value="C">C</button>
+                        <button class="calculator-button operator bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg text-xl" data-value="/">/</button>
+                        <button class="calculator-button operator bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg text-xl" data-value="*">*</button>
+                        <button class="calculator-button operator bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg text-xl" data-value="-">-</button>
+
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="7">7</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="8">8</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="9">9</button>
+                        <button class="calculator-button operator bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-lg text-xl" data-value="+">+</button>
+
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="4">4</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="5">5</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="6">6</button>
+                        <button class="calculator-button equals bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg text-xl row-span-2" data-value="=">=</button>
+
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="1">1</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="2">2</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value="3">3</button>
+
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl col-span-2" data-value="0">0</button>
+                        <button class="calculator-button number bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg text-xl" data-value=".">.</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Kasir Section -->
+        <section id="kasir" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl hidden">
+            <h2 class="text-3xl font-bold mb-4 text-teal-300">Aplikasi Kasir Sederhana</h2>
+            <p class="text-lg mb-6">Tambahkan barang ke daftar belanja dan cetak struk.</p>
+
+            <div class="space-y-4 mb-8 p-6 bg-gray-700 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4 text-teal-200">Tambah Barang</h3>
+                <div>
+                    <label for="itemName" class="block text-lg font-medium text-gray-300 mb-1">Nama Barang:</label>
+                    <input type="text" id="itemName" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label for="itemPrice" class="block text-lg font-medium text-gray-300 mb-1">Harga (Rp):</label>
+                    <input type="number" id="itemPrice" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" min="0">
+                </div>
+                <div>
+                    <label for="itemQuantity" class="block text-lg font-medium text-gray-300 mb-1">Jumlah:</label>
+                    <input type="number" id="itemQuantity" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" min="1" value="1">
+                </div>
+                <button id="addItemBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                    Tambah Barang
+                </button>
+            </div>
+
+            <div class="mb-8 p-6 bg-gray-700 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4 text-teal-200">Daftar Belanja</h3>
+                <table class="w-full text-left text-sm mb-4">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="py-2">Barang</th>
+                            <th class="py-2 text-center">Jumlah</th>
+                            <th class="py-2 text-right">Harga</th>
+                            <th class="py-2 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartItems">
+                        <!-- Cart items will be added here by JavaScript -->
+                        <tr><td colspan="4" class="py-2 text-center text-gray-400">Belum ada barang ditambahkan.</td></tr>
+                    </tbody>
+                </table>
+                <div class="text-right text-lg font-bold">
+                    Total: Rp <span id="cartTotal">0</span>
+                </div>
+            </div>
+
+            <div class="text-center mb-8">
+                <button id="printReceiptBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                    Cetak Struk PDF (58mm)
+                </button>
+                 <div id="pdfMessage" class="mt-4 text-red-400 hidden"></div>
+            </div>
+
+            <!-- Hidden div for PDF content generation (for html2canvas) -->
+            <div id="receiptContentForPdf" class="receipt-content absolute -left-[9999px]">
+                <!-- This content will be generated dynamically by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl hidden">
+            <h2 class="text-3xl font-bold mb-4 text-teal-300">Profil</h2>
+            <p class="text-lg mb-4">Website ini berdiri sejak tahun 2025 oleh Kang Ilham. Kami berkomitmen untuk memberikan informasi yang relevan dan berguna.</p>
+            <p class="text-lg mb-2">Kunjungi juga website kami di: <a href="http://www.panggilsitukang.com" target="_blank" class="text-blue-400 hover:underline">www.panggilsitukang.com</a></p>
+            <p class="text-lg font-bold mb-2">Anda perlu jasa :</p>
+            <ul class="list-disc list-inside text-left mx-auto max-w-md mb-4">
+                <li>Les private</li>
+                <li>Service Elektronik</li>
+                <li>Bengkel Las</li>
+                <li>Pijat Refleksi</li>
+                <li>Antar Jemput Barang</li>
+                <li>Antar Jemput</li>
+                <li>Cleaning Service</li>
+                <li>Renovasi Bangunan</li>
+                <li>Penjualan</li>
+                <li>Dll.</li>
+            </ul>
+            <p class="text-lg mb-4"><span class="font-bold">NB :</span> Kami menerima Jasa lainnya silahkan japri nanti tim kami akan langsung ke TKP.</p>
+            <!-- Corrected text here -->
+            <p class="text-xl font-bold text-teal-300">Apapun kebutuhan anda..?!! . panggil situkang aja urusan pasti beres..!!</p>
+        </section>
+
+        <!-- Address Section -->
+        <section id="address" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl hidden">
+            <h2 class="text-3xl font-bold mb-4 text-teal-300">Alamat</h2>
+            <!-- New descriptive text for address -->
+            <p class="text-lg mb-4">Silahkan bagi anda yang mau berkunjung ditempat kami bisa langsung ke alamat di bawah ini:</p>
+            <p class="text-lg">Jln. Swadaya RT. 005/003 Kel. Rawa Mekarjaya Kec. Serpong Kota Tangerang Selatan.</p>
+        </section>
+
+        <!-- Contact Section with Order Form (formerly Hubungi Kami) -->
+        <section id="kontak" class="content-section bg-gray-800 p-8 rounded-xl shadow-xl hidden">
+            <h2 class="text-3xl font-bold mb-4 text-teal-300">Kontak</h2>
+            <p class="text-lg mb-6">Anda bisa menghubungi kami di nomor kontak <span class="font-bold">6285777246246</span>.</p>
+
+            <h3 class="text-2xl font-bold mb-4 text-teal-300">Formulir Order</h3>
+            <form id="orderForm" class="space-y-4">
+                <div>
+                    <label for="nama" class="block text-lg font-medium text-gray-300 mb-1">Nama:</label>
+                    <input type="text" id="nama" name="nama" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                </div>
+                <div>
+                    <label for="nomorHp" class="block text-lg font-medium text-gray-300 mb-1">Nomor HP:</label>
+                    <input type="tel" id="nomorHp" name="nomorHp" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                </div>
+                <div>
+                    <label for="alamat" class="block text-lg font-medium text-gray-300 mb-1">Alamat:</label>
+                    <textarea id="alamat" name="alamat" rows="3" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" required></textarea>
+                </div>
+                <div>
+                    <label for="pesan" class="block text-lg font-medium text-gray-300 mb-1">Pesan:</label>
+                    <textarea id="pesan" name="pesan" rows="5" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-teal-500 focus:border-transparent" required></textarea>
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                    Kirim Pesan via WhatsApp
+                </button>
+                <!-- New Telegram buttons -->
+                <div class="flex flex-col sm:flex-row gap-2 mt-2">
+                    <button type="button" id="sendTelegramBtn" class="w-full sm:w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                        Kirim Pesan via Telegram
+                    </button>
+                    <button type="button" id="copyTelegramMessageBtn" class="w-full sm:w-1/2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md">
+                        Salin Pesan Telegram
+                    </button>
+                </div>
+                <div id="telegramMessageStatus" class="mt-2 text-sm text-center text-gray-300 hidden"></div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer with Scrolling Animation -->
+    <footer class="bg-gray-900 p-4 mt-8 text-center text-gray-400 rounded-t-lg">
+        <div class="overflow-hidden">
+            <p class="text-xl animate-marquee">Terima kasih sudah berkunjung ke website kami!</p>
+        </div>
+        <p class="text-sm mt-2">&copy; 2025 Website Kang Ilham. Hak Cipta Dilindungi.</p>
+    </footer>
+
+    <script>
+        // Initialize jsPDF outside the DOMContentLoaded for broader access
+        const { jsPDF } = window.jspdf;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const orderForm = document.getElementById('orderForm');
+            const whatsappNumber = '6285777246246'; // Target WhatsApp number
+            const telegramBotUsername = 'panggilsitukangbot'; // Telegram bot username
+
+            // Elements for AI text-to-image feature
+            const promptInput = document.getElementById('promptInput');
+            const generateImageBtn = document.getElementById('generateImageBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const imageOutput = document.getElementById('imageOutput');
+
+            // Elements for AI image-to-animation feature
+            const imageUpload = document.getElementById('imageUpload');
+            const uploadedImagePreview = document.getElementById('uploadedImagePreview');
+            const animateImageBtn = document.getElementById('animateImageBtn');
+            let currentUploadedImageElement = null; // To store the <img> element for animation
+
+            // Elements for AI language translator feature
+            const idText = document.getElementById('idText');
+            const translateBtn = document.getElementById('translateBtn');
+            const translateLoading = document.getElementById('translateLoading');
+            const enText = document.getElementById('enText');
+
+            // Elements for Kasir application
+            const itemNameInput = document.getElementById('itemName');
+            const itemPriceInput = document.getElementById('itemPrice');
+            const itemQuantityInput = document.getElementById('itemQuantity');
+            const addItemBtn = document.getElementById('addItemBtn');
+            const cartItemsTableBody = document.getElementById('cartItems');
+            const cartTotalSpan = document.getElementById('cartTotal');
+            const printReceiptBtn = document.getElementById('printReceiptBtn');
+            const receiptContentForPdf = document.getElementById('receiptContentForPdf');
+            const pdfMessage = document.getElementById('pdfMessage');
+
+            let cart = []; // Array to store items in the cart
+            let transactionNumber = 1; // Simple transaction counter
+
+            // Elements for VEO 3 Prompt Generator
+            const charNameInput = document.getElementById('charName');
+            const nationalityInput = document.getElementById('nationality');
+            const charCharacteristicsInput = document.getElementById('charCharacteristics');
+            const mainActionInput = document.getElementById('mainAction');
+            const emotionInput = document.getElementById('emotion');
+            const locationInput = document.getElementById('location');
+            const timeSelect = document.getElementById('time');
+            const weatherSelect = document.getElementById('weather');
+            const seasonSelect = document.getElementById('season');
+            const cameraStyleSelect = document.getElementById('cameraStyle');
+            const cameraMovementSelect = document.getElementById('cameraMovement');
+            const cameraAngleSelect = document.getElementById('cameraAngle');
+            const focusSelect = document.getElementById('focus');
+            const lightingSelect = document.getElementById('lighting');
+            const colorGradingSelect = document.getElementById('colorGrading');
+            const dialogTypeSelect = document.getElementById('dialogType');
+            const dialogCharInput = document.getElementById('dialogChar');
+            const dialogContentInput = document.getElementById('dialogContent');
+            const voiceMoodInput = document.getElementById('voiceMood');
+            const envSoundInput = document.getElementById('envSound');
+            const bgMusicInput = document.getElementById('bgMusic');
+            const videoQualitySelect = document.getElementById('videoQuality');
+            const videoDurationSelect = document.getElementById('videoDuration');
+            const videoRatioSelect = document.getElementById('videoRatio');
+            const additionalDetailsInput = document.getElementById('additionalDetails');
+            const generateVEO3PromptBtn = document.getElementById('generateVEO3PromptBtn');
+            const indoPromptOutput = document.getElementById('indoPromptOutput');
+            const engPromptOutput = document.getElementById('engPromptOutput');
+
+            // Telegram button elements
+            const sendTelegramBtn = document.getElementById('sendTelegramBtn');
+            const copyTelegramMessageBtn = document.getElementById('copyTelegramMessageBtn'); // New copy button
+            const telegramMessageStatus = document.getElementById('telegramMessageStatus'); // New status div
+
+            // Calculator elements
+            const calculatorDisplay = document.getElementById('calculator-display');
+            const calculatorButtons = document.querySelectorAll('.calculator-button');
+
+            let currentInput = '0';
+            let firstOperand = null;
+            let operator = null;
+            let waitingForSecondOperand = false;
+
+            const updateCalculatorDisplay = () => {
+                calculatorDisplay.value = currentInput;
+            };
+
+            const resetCalculator = () => {
+                currentInput = '0';
+                firstOperand = null;
+                operator = null;
+                waitingForSecondOperand = false;
+                updateCalculatorDisplay();
+            };
+
+            const handleNumberClick = (num) => {
+                if (waitingForSecondOperand) {
+                    currentInput = num;
+                    waitingForSecondOperand = false;
+                } else {
+                    currentInput = currentInput === '0' ? num : currentInput + num;
+                }
+                updateCalculatorDisplay();
+            };
+
+            const handleDecimalClick = () => {
+                if (!currentInput.includes('.')) {
+                    currentInput += '.';
+                }
+                updateCalculatorDisplay();
+            };
+
+            const handleOperatorClick = (nextOperator) => {
+                const inputValue = parseFloat(currentInput);
+
+                if (operator && waitingForSecondOperand) {
+                    operator = nextOperator;
+                    return;
+                }
+
+                if (firstOperand === null) {
+                    firstOperand = inputValue;
+                } else if (operator) {
+                    const result = performCalculation[operator](firstOperand, inputValue);
+                    currentInput = String(result);
+                    firstOperand = result;
+                }
+
+                waitingForSecondOperand = true;
+                operator = nextOperator;
+                updateCalculatorDisplay();
+            };
+
+            const performCalculation = {
+                '/': (first, second) => first / second,
+                '*': (first, second) => first * second,
+                '+': (first, second) => first + second,
+                '-': (first, second) => first - second,
+                '=': (first, second) => second, // For '=' operator, just display the second operand if no previous operation
+            };
+
+
+            calculatorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const value = button.dataset.value;
+
+                    if (button.classList.contains('number')) {
+                        handleNumberClick(value);
+                    } else if (button.classList.contains('operator')) {
+                        if (value === 'C') {
+                            resetCalculator();
+                        } else {
+                            handleOperatorClick(value);
+                        }
+                    } else if (button.classList.contains('equals')) {
+                        if (operator && firstOperand !== null) {
+                            const inputValue = parseFloat(currentInput);
+                            const result = performCalculation[operator](firstOperand, inputValue);
+                            currentInput = String(result);
+                            firstOperand = null; // Reset for next calculation
+                            operator = null;
+                            waitingForSecondOperand = false;
+                        }
+                        updateCalculatorDisplay();
+                    }
+                });
+            });
+
+
+            // Function to display a specific section and hide others
+            const showSection = (id) => {
+                contentSections.forEach(section => {
+                    section.classList.add('hidden'); // Sembunyikan semua bagian
+                });
+                document.getElementById(id).classList.remove('hidden'); // Tampilkan bagian yang dipilih
+
+                // Perbarui kelas 'active' pada tautan navigasi
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            };
+
+
+            // Add event listener to each navigation link
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Mencegah perilaku default (gulir halaman)
+                    const targetId = e.target.getAttribute('href').substring(1); // Ambil ID dari href
+                    showSection(targetId);
+                });
+            });
+
+            // Handle order form submission (WhatsApp)
+            if (orderForm) {
+                orderForm.addEventListener('submit', (e) => {
+                    e.preventDefault(); // Prevent default form submission
+
+                    const nama = document.getElementById('nama').value;
+                    const nomorHp = document.getElementById('nomorHp').value;
+                    const alamat = document.getElementById('alamat').value;
+                    const pesan = document.getElementById('pesan').value;
+
+                    // Construct the WhatsApp message
+                    const whatsappMessage = `*Order Baru dari Website Kang Ilham*\n\n` +
+                                            `*Nama:* ${nama}\n` +
+                                            `*Nomor HP:* ${nomorHp}\n` +
+                                            `*Alamat:* ${alamat}\n` +
+                                            `*Pesan:* ${pesan}\n\n` +
+                                            `Terima kasih!`;
+
+                    // Encode the message for URL
+                    const encodedMessage = encodeURIComponent(whatsappMessage);
+
+                    // Create the WhatsApp URL
+                    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+                    // Open WhatsApp in a new tab/window
+                    window.open(whatsappUrl, '_blank');
+
+                    // Optional: Clear the form after submission
+                    orderForm.reset();
+                });
+            }
+
+            // Handle Telegram button click
+            if (sendTelegramBtn) {
+                sendTelegramBtn.addEventListener('click', () => {
+                    const nama = document.getElementById('nama').value;
+                    const nomorHp = document.getElementById('nomorHp').value;
+                    const alamat = document.getElementById('alamat').value;
+                    const pesan = document.getElementById('pesan').value;
+
+                    const telegramMessage = `*Order Baru dari Website Kang Ilham (via Telegram)*\n\n` +
+                                            `*Nama:* ${nama}\n` +
+                                            `*Nomor HP:* ${nomorHp}\n` +
+                                            `*Alamat:* ${alamat}\n` +
+                                            `*Pesan:* ${pesan}\n\n` +
+                                            `Terima kasih!`;
+
+                    const encodedTelegramMessage = encodeURIComponent(telegramMessage);
+                    const telegramUrl = `https://t.me/${telegramBotUsername}?text=${encodedTelegramMessage}`;
+
+                    window.open(telegramUrl, '_blank');
+                });
+            }
+
+            // Handle Copy Telegram Message button click
+            if (copyTelegramMessageBtn) {
+                copyTelegramMessageBtn.addEventListener('click', async () => {
+                    const nama = document.getElementById('nama').value;
+                    const nomorHp = document.getElementById('nomorHp').value;
+                    const alamat = document.getElementById('alamat').value;
+                    const pesan = document.getElementById('pesan').value;
+
+                    const telegramMessage = `*Order Baru dari Website Kang Ilham (via Telegram)*\n\n` +
+                                            `*Nama:* ${nama}\n` +
+                                            `*Nomor HP:* ${nomorHp}\n` +
+                                            `*Alamat:* ${alamat}\n` +
+                                            `*Pesan:* ${pesan}\n\n` +
+                                            `Terima kasih!`;
+
+                    try {
+                        // Use the deprecated but generally supported execCommand for clipboard due to iframe restrictions
+                        const textarea = document.createElement('textarea');
+                        textarea.value = telegramMessage;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+
+                        telegramMessageStatus.textContent = 'Pesan disalin ke clipboard! Silakan tempel di Telegram.';
+                        telegramMessageStatus.classList.remove('hidden', 'text-red-400');
+                        telegramMessageStatus.classList.add('text-green-400');
+                    } catch (err) {
+                        console.error('Gagal menyalin pesan Telegram:', err);
+                        telegramMessageStatus.textContent = 'Gagal menyalin pesan. Silakan salin secara manual.';
+                        telegramMessageStatus.classList.remove('hidden', 'text-green-400');
+                        telegramMessageStatus.classList.add('text-red-400');
+                    }
+                    telegramMessageStatus.classList.remove('hidden');
+                    setTimeout(() => {
+                        telegramMessageStatus.classList.add('hidden');
+                    }, 5000); // Hide message after 5 seconds
+                });
+            }
+
+            // AI Image Generation Functionality (Text to Image)
+            if (generateImageBtn && promptInput && loadingIndicator && imageOutput) {
+                generateImageBtn.addEventListener('click', async () => {
+                    const prompt = promptInput.value.trim();
+                    if (!prompt) {
+                        imageOutput.innerHTML = '<p class="text-red-400">Mohon masukkan deskripsi teks untuk gambar.</p>';
+                        return;
+                    }
+
+                    // Show loading indicator and clear previous image
+                    loadingIndicator.classList.remove('hidden');
+                    imageOutput.innerHTML = ''; // Clear previous content
+
+                    try {
+                        let chatHistory = [];
+                        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                        const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1} };
+                        const apiKey = "";
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(`Gagal membuat gambar: ${errorData.error ? errorData.error.message : response.statusText}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                            const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                            const imgElement = document.createElement('img');
+                            imgElement.src = imageUrl;
+                            imgElement.alt = prompt;
+                            imgElement.classList.add('max-w-full', 'h-auto', 'rounded-lg', 'shadow-lg');
+                            imageOutput.appendChild(imgElement);
+                        } else {
+                            imageOutput.innerHTML = '<p class="text-red-400">Tidak dapat menghasilkan gambar. Coba lagi.</p>';
+                        }
+                    } catch (error) {
+                        console.error('Error generating image:', error);
+                        imageOutput.innerHTML = `<p class="text-red-400">Terjadi kesalahan: ${error.message}</p>`;
+                    } finally {
+                        loadingIndicator.classList.add('hidden'); // Hide loading indicator
+                    }
+                });
+            }
+
+            // AI Image to Animation Functionality (Simple CSS Animation)
+            if (imageUpload && uploadedImagePreview && animateImageBtn) {
+                imageUpload.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            uploadedImagePreview.innerHTML = ''; // Clear previous content
+                            currentUploadedImageElement = document.createElement('img');
+                            currentUploadedImageElement.src = event.target.result;
+                            currentUploadedImageElement.alt = 'Uploaded Image';
+                            currentUploadedImageElement.classList.add('max-w-full', 'h-auto', 'rounded-lg', 'shadow-md');
+                            uploadedImagePreview.appendChild(currentUploadedImageElement);
+                            animateImageBtn.disabled = false; // Enable animation button
+                            // Remove animation class if already present from a previous apply
+                            currentUploadedImageElement.classList.remove('animated-image');
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        uploadedImagePreview.innerHTML = '<p class="text-gray-400">Pratinjau gambar Anda akan muncul di sini.</p>';
+                        animateImageBtn.disabled = true; // Disable animation button
+                        currentUploadedImageElement = null;
+                    }
+                });
+
+                animateImageBtn.addEventListener('click', () => {
+                    if (currentUploadedImageElement) {
+                        // Toggle or add the animation class
+                        currentUploadedImageElement.classList.toggle('animated-image');
+                    } else {
+                        uploadedImagePreview.innerHTML = '<p class="text-red-400">Mohon unggah gambar terlebih dahulu.</p>';
+                    }
+                });
+            }
+
+            // AI Language Translator Functionality (ID to EN)
+            if (idText && translateBtn && translateLoading && enText) {
+                translateBtn.addEventListener('click', async () => {
+                    const textToTranslate = idText.value.trim();
+                    if (!textToTranslate) {
+                        enText.value = 'Mohon masukkan teks Bahasa Indonesia untuk diterjemahkan.';
+                        return;
+                    }
+
+                    translateLoading.classList.remove('hidden');
+                    enText.value = ''; // Clear previous translation
+
+                    try {
+                        let chatHistory = [];
+                        chatHistory.push({
+                            role: "user",
+                            parts: [{ text: `Terjemahkan teks berikut dari Bahasa Indonesia ke Bahasa Inggris: "${textToTranslate}"` }]
+                        });
+                        const payload = { contents: chatHistory };
+                        const apiKey = "";
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(`Gagal menerjemahkan: ${errorData.error ? errorData.error.message : response.statusText}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            const translatedText = result.candidates[0].content.parts[0].text;
+                            enText.value = translatedText;
+                        } else {
+                            enText.value = 'Tidak dapat menerjemahkan teks. Coba lagi.';
+                        }
+                    } catch (error) {
+                        console.error('Error translating text:', error);
+                        enText.value = `Terjadi kesalahan saat menerjemahkan: ${error.message}`;
+                    } finally {
+                        translateLoading.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Kasir Application Logic
+            if (addItemBtn && itemNameInput && itemPriceInput && itemQuantityInput && cartItemsTableBody && cartTotalSpan && printReceiptBtn) {
+                const updateCartDisplay = () => {
+                    cartItemsTableBody.innerHTML = ''; // Clear current display
+                    let total = 0;
+
+                    if (cart.length === 0) {
+                        cartItemsTableBody.innerHTML = '<tr><td colspan="4" class="py-2 text-center text-gray-400">Belum ada barang ditambahkan.</td></tr>';
+                    } else {
+                        cart.forEach((item, index) => {
+                            const subtotal = item.price * item.quantity;
+                            total += subtotal;
+                            const row = `
+                                <tr class="border-b border-gray-700 last:border-b-0">
+                                    <td class="py-2">${item.name}</td>
+                                    <td class="py-2 text-center">${item.quantity}</td>
+                                    <td class="py-2 text-right">Rp ${item.price.toLocaleString('id-ID')}</td>
+                                    <td class="py-2 text-right">Rp ${subtotal.toLocaleString('id-ID')}</td>
+                                </tr>
+                            `;
+                            cartItemsTableBody.innerHTML += row;
+                        });
+                    }
+                    cartTotalSpan.textContent = total.toLocaleString('id-ID');
+                };
+
+                addItemBtn.addEventListener('click', () => {
+                    const name = itemNameInput.value.trim();
+                    const price = parseFloat(itemPriceInput.value);
+                    const quantity = parseInt(itemQuantityInput.value);
+
+                    if (name && !isNaN(price) && price > 0 && !isNaN(quantity) && quantity > 0) {
+                        cart.push({ name, price, quantity });
+                        updateCartDisplay();
+                        itemNameInput.value = '';
+                        itemPriceInput.value = '';
+                        itemQuantityInput.value = '1';
+                        pdfMessage.classList.add('hidden'); // Hide any previous error message
+                    } else {
+                        pdfMessage.textContent = 'Mohon isi Nama Barang, Harga (harus > 0), dan Jumlah (harus > 0) dengan benar.';
+                        pdfMessage.classList.remove('hidden');
+                    }
+                });
+
+                printReceiptBtn.addEventListener('click', async () => {
+                    if (cart.length === 0) {
+                        pdfMessage.textContent = 'Tidak ada barang di keranjang untuk dicetak struk.';
+                        pdfMessage.classList.remove('hidden');
+                        pdfMessage.classList.remove('text-green-400');
+                        pdfMessage.classList.add('text-red-400');
+                        return;
+                    }
+
+                    pdfMessage.classList.add('hidden');
+
+                    // Generate receipt HTML content for PDF
+                    let receiptHtml = `
+                        <h3>STRUK PEMBELIAN</h3>
+                        <p style="text-align:center;">Panggil Si Tukang</p>
+                        <p style="text-align:center;">Jln. Swadaya RT. 005/003</p>
+                        <p style="text-align:center;">Kel. Rawa Mekarjaya Kec. Serpong</p>
+                        <p style="text-align:center;">Kota Tangerang Selatan</p>
+                        <div class="dashed-line"></div>
+                        <p>Tanggal: ${new Date().toLocaleDateString('id-ID')}</p>
+                        <p>Waktu: ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p>Transaksi #: ${transactionNumber.toString().padStart(4, '0')}</p>
+                        <div class="dashed-line"></div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">Barang</th>
+                                    <th style="text-align:right;">Jml</th>
+                                    <th style="text-align:right;">Harga</th>
+                                    <th style="text-align:right;">Sub</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    let total = 0;
+                    cart.forEach(item => {
+                        const subtotal = item.price * item.quantity;
+                        total += subtotal;
+                        receiptHtml += `
+                            <tr>
+                                <td>${item.name}</td>
+                                <td style="text-align:right;">${item.quantity}</td>
+                                <td style="text-align:right;">Rp ${item.price.toLocaleString('id-ID')}</td>
+                                <td style="text-align:right;">Rp ${subtotal.toLocaleString('id-ID')}</td>
+                            </tr>
+                        `;
+                    });
+
+                    receiptHtml += `
+                            </tbody>
+                        </table>
+                        <div class="dashed-line"></div>
+                        <p style="text-align:right;">Total: Rp ${total.toLocaleString('id-ID')}</p>
+                        <div class="dashed-line"></div>
+                        <p style="text-align:center;">Terima Kasih Atas Kunjungan Anda!</p>
+                        <p style="text-align:center;">-- Panggil Si Tukang --</p>
+                    `;
+
+                    receiptContentForPdf.innerHTML = receiptHtml;
+
+                    try {
+                        const canvas = await html2canvas(receiptContentForPdf, {
+                            scale: 2, // Higher scale for better resolution
+                            useCORS: true, // If you have images from different origin
+                            logging: false // Disable logging for cleaner console
+                        });
+
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 58; // mm
+                        const pageHeight = (canvas.height * imgWidth) / canvas.width; // Calculate page height dynamically
+
+                        // Initialize jsPDF with custom unit (mm) and size
+                        const doc = new jsPDF({
+                            unit: 'mm',
+                            format: [imgWidth, pageHeight] // Custom format: [width, height]
+                        });
+
+                        // Add the image (canvas) to the PDF
+                        doc.addImage(imgData, 'PNG', 0, 0, imgWidth, pageHeight);
+
+                        // Save the PDF
+                        doc.save(`struk_pembelian_${new Date().getTime()}.pdf`);
+
+                        // Reset cart and increment transaction number
+                        cart = [];
+                        updateCartDisplay();
+                        transactionNumber++;
+                        pdfMessage.textContent = 'Struk berhasil dicetak dan diunduh!';
+                        pdfMessage.classList.remove('hidden');
+                        pdfMessage.classList.remove('text-red-400');
+                        pdfMessage.classList.add('text-green-400'); // Success message color
+
+                    } catch (error) {
+                        console.error('Error generating PDF:', error);
+                        pdfMessage.textContent = `Gagal membuat PDF: ${error.message}. Pastikan browser Anda mendukung fitur ini.`;
+                        pdfMessage.classList.remove('hidden');
+                        pdfMessage.classList.remove('text-green-400');
+                        pdfMessage.classList.add('text-red-400'); // Error message color
+                    } finally {
+                        receiptContentForPdf.innerHTML = ''; // Clear the hidden content
+                    }
+                });
+            }
+
+            // VEO 3 Prompt Generator Logic
+            if (generateVEO3PromptBtn && indoPromptOutput && engPromptOutput) {
+                generateVEO3PromptBtn.addEventListener('click', () => {
+                    const charName = charNameInput.value.trim();
+                    const nationality = nationalityInput.value.trim();
+                    const charCharacteristics = charCharacteristicsInput.value.trim();
+                    const mainAction = mainActionInput.value.trim();
+                    const emotion = emotionInput.value.trim();
+                    const location = locationInput.value.trim();
+                    const time = timeSelect.value;
+                    const weather = weatherSelect.value;
+                    const season = seasonSelect.value;
+                    const cameraStyle = cameraStyleSelect.value;
+                    const cameraMovement = cameraMovementSelect.value;
+                    const cameraAngle = cameraAngleSelect.value;
+                    const focus = focusSelect.value;
+                    const lighting = lightingSelect.value;
+                    const colorGrading = colorGradingSelect.value;
+                    const dialogType = dialogTypeSelect.value;
+                    const dialogChar = dialogCharInput.value.trim();
+                    const dialogContent = dialogContentInput.value.trim();
+                    const voiceMood = voiceMoodInput.value.trim();
+                    const envSound = envSoundInput.value.trim();
+                    const bgMusic = bgMusicInput.value.trim();
+                    const videoQuality = videoQualitySelect.value;
+                    const videoDuration = videoDurationSelect.value;
+                    const videoRatio = videoRatioSelect.value;
+                    const additionalDetails = additionalDetailsInput.value.trim();
+
+                    // Construct Indonesian Prompt
+                    let indoPrompt = `Buat video animasi pendek yang sinematik untuk VEO 3.`;
+
+                    if (charName) {
+                        indoPrompt += ` Subjek utama adalah ${charName}`;
+                        if (nationality) indoPrompt += ` (${nationality})`;
+                        if (charCharacteristics) indoPrompt += ` dengan karakteristik ${charCharacteristics.toLowerCase()}`;
+                        indoPrompt += `.`;
+                    } else {
+                         indoPrompt += ` Fokus pada subjek yang digerakkan oleh aksi.`;
+                    }
+
+                    if (mainAction) indoPrompt += ` Ia sedang ${mainAction.toLowerCase()}.`;
+                    if (emotion) indoPrompt += ` Menampilkan ekspresi ${emotion.toLowerCase()}.`;
+
+                    if (location) indoPrompt += ` Berlatar di ${location.toLowerCase()}`;
+                    if (time) indoPrompt += ` pada ${time.split(' ')[0].toLowerCase()}`; // Only take Indonesian part
+                    if (weather) indoPrompt += ` dengan cuaca ${weather.split(' ')[0].toLowerCase()}`;
+                    if (season) indoPrompt += ` di musim ${season.split(' ')[0].toLowerCase()}`;
+                    indoPrompt += `.`;
+
+                    if (cameraStyle) indoPrompt += ` Gaya visualnya adalah ${cameraStyle.split(' ')[0].toLowerCase()}`;
+                    if (cameraMovement) indoPrompt += ` dengan pergerakan kamera ${cameraMovement.split(' ')[0].toLowerCase()}`;
+                    if (cameraAngle) indoPrompt += ` dari sudut ${cameraAngle.split(' ')[0].toLowerCase()}`;
+                    if (focus) indoPrompt += ` dengan fokus ${focus.split(' ')[0].toLowerCase()}`;
+                    if (lighting) indoPrompt += ` dan pencahayaan ${lighting.split(' ')[0].toLowerCase()}`;
+                    if (colorGrading) indoPrompt += ` yang memiliki gradasi warna ${colorGrading.split(' ')[0].toLowerCase()}`;
+                    indoPrompt += `.`;
+
+                    if (dialogType && dialogType !== "Tanpa dialog") {
+                        indoPrompt += ` Video ini akan menampilkan ${dialogType.toLowerCase()}`;
+                        if (dialogChar) indoPrompt += ` oleh ${dialogChar}`;
+                        if (dialogContent) indoPrompt += `: "${dialogContent}"`;
+                        indoPrompt += `.`;
+                    } else if (dialogType === "Tanpa dialog") {
+                        indoPrompt += ` Tanpa dialog.`;
+                    }
+
+                    if (voiceMood) indoPrompt += ` Mood suara adalah ${voiceMood.toLowerCase()}.`;
+                    if (envSound) indoPrompt += ` Suara lingkungan mencakup ${envSound.toLowerCase()}.`;
+                    if (bgMusic) indoPrompt += ` Musik latar belakang yang ${bgMusic.toLowerCase()}.`;
+
+                    if (videoQuality) indoPrompt += ` Kualitas video: ${videoQuality}.`;
+                    if (videoDuration) indoPrompt += ` Durasi: ${videoDuration}.`;
+                    if (videoRatio) indoPrompt += ` Rasio: ${videoRatio}.`;
+
+                    if (additionalDetails) indoPrompt += ` Detail tambahan: ${additionalDetails}.`;
+
+                    // Construct English Prompt
+                    let engPrompt = `Create a short, cinematic animated video for VEO 3.`;
+
+                    if (charName) {
+                        engPrompt += ` The main subject is ${charName}`;
+                        if (nationality) engPrompt += ` (${nationality})`;
+                        if (charCharacteristics) engPrompt += ` with ${charCharacteristics.toLowerCase()} characteristics`;
+                        engPrompt += `.`;
+                    } else {
+                        engPrompt += ` Focus on an action-driven subject.`;
+                    }
+
+
+                    if (mainAction) engPrompt += ` They are ${mainAction.toLowerCase()}.`;
+                    if (emotion) engPrompt += ` Displaying a ${emotion.toLowerCase()} expression.`;
+
+                    if (location) engPrompt += ` Set in ${location.toLowerCase()}`;
+                    if (time) engPrompt += ` during the ${time.split('(')[1].replace(')', '').trim().toLowerCase()}`;
+                    if (weather) engPrompt += ` with ${weather.split('(')[1].replace(')', '').trim().toLowerCase()} weather`;
+                    if (season) engPrompt += ` in the ${season.split('(')[1].replace(')', '').trim().toLowerCase()} season`;
+                    engPrompt += `.`;
+
+                    if (cameraStyle) engPrompt += ` The visual style is ${cameraStyle.split('(')[1].replace(')', '').trim().toLowerCase()}`;
+                    if (cameraMovement) engPrompt += ` with ${cameraMovement.split('(')[1].replace(')', '').trim().toLowerCase()} camera movement`;
+                    if (cameraAngle) engPrompt += ` from a ${cameraAngle.split('(')[1].replace(')', '').trim().toLowerCase()} angle`;
+                    if (focus) engPrompt += ` with ${focus.split('(')[1].replace(')', '').trim().toLowerCase()} focus`;
+                    if (lighting) engPrompt += ` and ${lighting.split('(')[1].replace(')', '').trim().toLowerCase()} lighting`;
+                    if (colorGrading) engPrompt += ` featuring ${colorGrading.split('(')[1].replace(')', '').trim().toLowerCase()} color grading`;
+                    engPrompt += `.`;
+
+                    if (dialogType && dialogType !== "Tanpa dialog") {
+                        engPrompt += ` The video will feature ${dialogType.split('(')[1].replace(')', '').trim().toLowerCase()}`;
+                        if (dialogChar) engPrompt += ` by ${dialogChar}`;
+                        if (dialogContent) engPrompt += `: "${dialogContent}"`;
+                        engPrompt += `.`;
+                    } else if (dialogType === "Tanpa dialog") {
+                        engPrompt += ` No dialogue.`;
+                    }
+
+
+                    if (voiceMood) engPrompt += ` The voice mood is ${voiceMood.toLowerCase()}.`;
+                    if (envSound) engPrompt += ` Environmental sounds include ${envSound.toLowerCase()}.`;
+                    if (bgMusic) engPrompt += ` Background music is ${bgMusic.toLowerCase()}.`;
+
+                    if (videoQuality) engPrompt += ` Video quality: ${videoQuality}.`;
+                    if (videoDuration) engPrompt += ` Duration: ${videoDuration.split('(')[1].replace(')', '').trim().toLowerCase()}.`;
+                    if (videoRatio) engPrompt += ` Ratio: ${videoRatio}.`;
+
+                    if (additionalDetails) engPrompt += ` Additional details: ${additionalDetails}.`;
+
+                    indoPromptOutput.textContent = indoPrompt;
+                    engPromptOutput.textContent = engPrompt;
+                });
+            }
+
+            // Display 'home' section by default when the page loads
+            showSection('home');
+        });
+    </script>
+</body>
+</html>
